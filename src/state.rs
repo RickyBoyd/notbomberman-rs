@@ -116,16 +116,23 @@ fn load_sprites(world: &mut World) -> Handle<SpriteSheet> {
 pub const MAN_HEIGHT: f32 = 32.0;
 pub const MAN_WIDTH: f32 = 32.0;
 
+pub enum Player {
+    Player1,
+    Player2,
+}
+
 pub struct Man {
     pub width: f32,
     pub height: f32,
+    pub player: Player,
 }
 
 impl Man {
-    fn new() -> Man {
+    fn new(player: Player) -> Man {
         Man {
             width: MAN_WIDTH,
-            height: MAN_HEIGHT
+            height: MAN_HEIGHT,
+            player,
         }
     }
 }
@@ -151,7 +158,7 @@ fn initialise_men(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet
     // Create a left plank entity.
     world
         .create_entity()
-        .with(Man::new())
+        .with(Man::new(Player::Player1))
         .with(left_transform)
         .with(sprite_render.clone())
         .build();
@@ -159,7 +166,7 @@ fn initialise_men(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet
     // Create right plank entity.
     world
         .create_entity()
-        .with(Man::new())
+        .with(Man::new(Player::Player2))
         .with(right_transform)
         .with(sprite_render.clone())
         .build();
