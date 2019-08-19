@@ -3,7 +3,7 @@
         "player1_y": Emulated(pos: Key(W), neg: Key(S)),
         "player2_y": Emulated(pos: Key(Up), neg: Key(Down)),
         "player1_x": Emulated(pos: Key(D), neg: Key(A)),
-        "player1_x": Emulated(pos: Key(Right), neg: Key(Left)),
+        "player2_x": Emulated(pos: Key(Right), neg: Key(Left)),
     },
     actions: {},
 )

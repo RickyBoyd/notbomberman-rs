@@ -8,6 +8,9 @@ use amethyst::{
     ecs::prelude::{Component, DenseVecStorage},
 };
 
+pub const SCREEN_HEIGHT: f32 = 480.0;
+pub const SCREEN_WIDTH: f32 = 480.0;
+
 use log::info;
 
 pub struct Bomberman;
