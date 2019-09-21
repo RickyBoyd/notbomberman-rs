@@ -22,6 +22,8 @@ impl SimpleState for Bomberman {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
 
+
+        world.register::<Block>();
         // Get the screen dimensions so we can initialize the camera and
         // place our sprites correctly later. We'll clone this since we'll
         // pass the world mutably to the following functions.
@@ -30,6 +32,7 @@ impl SimpleState for Bomberman {
         let sprites = load_sprites(world);
 
         // Place the camera
+        initialise_blocks(world);
         initialise_men(world, &dimensions, sprites);
         init_camera(world, &dimensions);
 
@@ -173,4 +176,53 @@ fn initialise_men(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet
         .with(right_transform)
         .with(sprite_render.clone())
         .build();
+}
+
+pub const BLOCK_HEIGHT: f32 = 32.0;
+pub const BLOCK_WIDTH: f32 = 32.0;
+
+pub enum BlockState {
+    Empty,
+    Bomb,
+    Destructable,
+    Indestructable,
+}
+
+pub struct Block {
+    row: i32,
+    column: i32,
+    state: BlockState,
+}
+
+impl Block {
+    fn new(row: i32, column: i32, state: BlockState) -> Block {
+        Block{
+            row,
+            column,
+            state,
+        }
+    }
+}
+
+impl Component for Block {
+    type Storage = DenseVecStorage<Self>;
+}
+
+fn initialise_blocks(world: &mut World) {
+    for y in 0..15 {
+        let y_position = (y as f32) * BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0;
+        for x in 0..15 {
+            let mut transform = Transform::default();
+            transform.set_translation_xyz((x as f32) * BLOCK_WIDTH + BLOCK_WIDTH / 2.0, y_position, 0.0);
+            let block_state = match x%2 == 1 && y%2 == 1 {
+                true => BlockState::Indestructable,
+                false => BlockState::Empty,
+            };
+            world.
+                create_entity()
+                .with(Block::new(x, y, block_state))
+                .with(transform)
+                .build();
+        }
+    }
 }
