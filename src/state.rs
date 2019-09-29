@@ -23,7 +23,7 @@ impl SimpleState for Bomberman {
         let world = data.world;
 
 
-        world.register::<Block>();
+        world.register::<Board>();
         // Get the screen dimensions so we can initialize the camera and
         // place our sprites correctly later. We'll clone this since we'll
         // pass the world mutably to the following functions.
@@ -180,7 +180,10 @@ fn initialise_men(world: &mut World, dimensions: &ScreenDimensions, sprite_sheet
 
 pub const BLOCK_HEIGHT: f32 = 32.0;
 pub const BLOCK_WIDTH: f32 = 32.0;
+pub const BOARD_HEIGHT: usize = 15;
+pub const BOARD_WIDTH: usize = 15;
 
+#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub enum BlockState {
     Empty,
     Bomb,
@@ -189,40 +192,49 @@ pub enum BlockState {
 }
 
 pub struct Block {
-    row: i32,
-    column: i32,
     state: BlockState,
 }
 
 impl Block {
-    fn new(row: i32, column: i32, state: BlockState) -> Block {
+    fn new(state: BlockState) -> Block {
         Block{
-            row,
-            column,
             state,
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.state == BlockState::Empty
+    }
+}
+
+pub struct Board {
+    pub blocks: Vec<Block>,
+}
+
+impl Board {
+    fn new(blocks: Vec<Block>) -> Board { 
+        Board{
+            blocks,
         }
     }
 }
 
-impl Component for Block {
+impl Component for Board {
     type Storage = DenseVecStorage<Self>;
 }
 
 fn initialise_blocks(world: &mut World) {
-    for y in 0..15 {
-        let y_position = (y as f32) * BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0;
-        for x in 0..15 {
-            let mut transform = Transform::default();
-            transform.set_translation_xyz((x as f32) * BLOCK_WIDTH + BLOCK_WIDTH / 2.0, y_position, 0.0);
+    let mut blocks = Vec::new();
+    for y in 0..BOARD_HEIGHT {
+        for x in 0..BOARD_WIDTH {
             let block_state = match x%2 == 1 && y%2 == 1 {
                 true => BlockState::Indestructable,
                 false => BlockState::Empty,
             };
-            world.
-                create_entity()
-                .with(Block::new(x, y, block_state))
-                .with(transform)
-                .build();
+            blocks.push(Block::new(block_state))
         }
     }
+    let board = Board::new(blocks);
+
+    world.create_entity().with(board).build();
 }
