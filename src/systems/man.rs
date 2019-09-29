@@ -95,9 +95,25 @@ fn in_blocks(new_pos: &Vector3<f32>) -> Vec<usize> {
             Neither => (),
         }
     } else if in_row != BOARD_HEIGHT && (y % BLOCK_HEIGHT) > BLOCK_HEIGHT / 2.0 {
-        block_indexes.push(board_index(in_column, in_row + 1))
+        block_indexes.push(board_index(in_column, in_row + 1));
+        match horizontal {
+            Left =>  block_indexes.push(board_index(in_column - 1, in_row + 1)),
+            Right => block_indexes.push(board_index(in_column + 1, in_row + 1)),
+            Neither => (),
+        }
     }
 
 
     block_indexes
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn in_middle() {
+        let pos = Vector3::new(BLOCK_WIDTH / 2.0 , BLOCK_HEIGHT / 2.0, 0.0);
+        let in_blocks = in_blocks(pos);
+        assert_eq!(in_blocks, vec![0]);
+    }
 }
