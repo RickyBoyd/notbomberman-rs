@@ -146,4 +146,11 @@ mod tests {
         let in_blocks = in_blocks(&pos);
         assert_eq!(in_blocks, vec![BOARD_WIDTH + 1, BOARD_WIDTH, BOARD_WIDTH * 2 + 1, BOARD_WIDTH * 2]);
     }
+
+    #[test]
+    fn right_horizontal_bottom_vertical() {
+        let pos = Vector3::new(BLOCK_WIDTH + BLOCK_WIDTH / 2.0 + 1.0, BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0 + 1.0, 0.0);
+        let in_blocks = in_blocks(&pos);
+        assert_eq!(in_blocks, vec![BOARD_WIDTH + 1, BOARD_WIDTH + 2, BOARD_WIDTH * 2 + 1, BOARD_WIDTH * 2 + 2]);
+    }
 }
