@@ -127,6 +127,20 @@ mod tests {
     }
 
     #[test]
+    fn in_left() {
+        let pos = Vector3::new(BLOCK_WIDTH + BLOCK_WIDTH / 2.0 - 1.0, BLOCK_HEIGHT / 2.0, 0.0);
+        let in_blocks = in_blocks(&pos);
+        assert_eq!(in_blocks, vec![1, 0]);
+    }
+    
+     #[test]
+    fn in_right() {
+        let pos = Vector3::new(BLOCK_WIDTH / 2.0 + 1.0, BLOCK_HEIGHT / 2.0, 0.0);
+        let in_blocks = in_blocks(&pos);
+        assert_eq!(in_blocks, vec![0, 1]);
+    }
+
+    #[test]
     fn middle_horizontal_top_vertical() {
         let pos = Vector3::new(BLOCK_WIDTH / 2.0, BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0 - 1.0, 0.0);
         let in_blocks = in_blocks(&pos);
@@ -138,6 +152,13 @@ mod tests {
         let pos = Vector3::new(BLOCK_WIDTH / 2.0 + BLOCK_HEIGHT - 1.0, BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0 - 1.0, 0.0);
         let in_blocks = in_blocks(&pos);
         assert_eq!(in_blocks, vec![BOARD_WIDTH + 1, BOARD_WIDTH, 1, 0]);
+    }
+
+    #[test]
+    fn right_horizontal_top_vertical() {
+        let pos = Vector3::new(BLOCK_WIDTH / 2.0 + BLOCK_HEIGHT + 1.0, BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0 - 1.0, 0.0);
+        let in_blocks = in_blocks(&pos);
+        assert_eq!(in_blocks, vec![BOARD_WIDTH + 1, BOARD_WIDTH + 2, 1, 2]);
     }
 
     #[test]
