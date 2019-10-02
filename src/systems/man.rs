@@ -58,6 +58,7 @@ fn pos_after_collisions(new_pos: &Vector3<f32>, board: &Board) -> Vector3<f32> {
     new_pos.clone()
 }
 
+#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 enum HorizontalBlockCollision {
     Left,
     Right,
@@ -90,19 +91,23 @@ fn in_blocks(new_pos: &Vector3<f32>) -> Vec<usize> {
     if in_row != 0 && (y % BLOCK_HEIGHT) < BLOCK_HEIGHT / 2.0 {
         block_indexes.push(board_index(in_column, in_row - 1));
         match horizontal {
-            Left =>  block_indexes.push(board_index(in_column - 1, in_row - 1)),
-            Right => block_indexes.push(board_index(in_column + 1, in_row - 1)),
-            Neither => (),
+            HorizontalBlockCollision::Left => {
+                block_indexes.push(board_index(in_column - 1, in_row - 1));
+            }
+            HorizontalBlockCollision::Right => {
+                block_indexes.push(board_index(in_column + 1, in_row - 1));
+            }
+            HorizontalBlockCollision::Neither => {
+            }
         }
     } else if in_row != BOARD_HEIGHT && (y % BLOCK_HEIGHT) > BLOCK_HEIGHT / 2.0 {
         block_indexes.push(board_index(in_column, in_row + 1));
         match horizontal {
-            Left =>  block_indexes.push(board_index(in_column - 1, in_row + 1)),
-            Right => block_indexes.push(board_index(in_column + 1, in_row + 1)),
-            Neither => (),
+            HorizontalBlockCollision::Left =>  block_indexes.push(board_index(in_column - 1, in_row + 1)),
+            HorizontalBlockCollision::Right => block_indexes.push(board_index(in_column + 1, in_row + 1)),
+            HorizontalBlockCollision::Neither => (),
         }
     }
-
 
     block_indexes
 }
@@ -113,7 +118,14 @@ mod tests {
     #[test]
     fn in_middle() {
         let pos = Vector3::new(BLOCK_WIDTH / 2.0 , BLOCK_HEIGHT / 2.0, 0.0);
-        let in_blocks = in_blocks(pos);
+        let in_blocks = in_blocks(&pos);
         assert_eq!(in_blocks, vec![0]);
+    }
+
+    #[test]
+    fn middle_horizontal_top_vetical() {
+        let pos = Vector3::new(BLOCK_WIDTH / 2.0 , BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0 - 1.0, 0.0);
+        let in_blocks = in_blocks(&pos);
+        assert_eq!(in_blocks, vec![BOARD_WIDTH, 0]);
     }
 }
