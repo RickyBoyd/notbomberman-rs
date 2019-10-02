@@ -103,8 +103,12 @@ fn in_blocks(new_pos: &Vector3<f32>) -> Vec<usize> {
     } else if in_row != BOARD_HEIGHT && (y % BLOCK_HEIGHT) > BLOCK_HEIGHT / 2.0 {
         block_indexes.push(board_index(in_column, in_row + 1));
         match horizontal {
-            HorizontalBlockCollision::Left =>  block_indexes.push(board_index(in_column - 1, in_row + 1)),
-            HorizontalBlockCollision::Right => block_indexes.push(board_index(in_column + 1, in_row + 1)),
+            HorizontalBlockCollision::Left =>  {
+                block_indexes.push(board_index(in_column - 1, in_row + 1));
+            }
+            HorizontalBlockCollision::Right => {
+                block_indexes.push(board_index(in_column + 1, in_row + 1))
+            }
             HorizontalBlockCollision::Neither => (),
         }
     }
@@ -117,15 +121,29 @@ mod tests {
     use super::*;
     #[test]
     fn in_middle() {
-        let pos = Vector3::new(BLOCK_WIDTH / 2.0 , BLOCK_HEIGHT / 2.0, 0.0);
+        let pos = Vector3::new(BLOCK_WIDTH / 2.0, BLOCK_HEIGHT / 2.0, 0.0);
         let in_blocks = in_blocks(&pos);
         assert_eq!(in_blocks, vec![0]);
     }
 
     #[test]
-    fn middle_horizontal_top_vetical() {
-        let pos = Vector3::new(BLOCK_WIDTH / 2.0 , BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0 - 1.0, 0.0);
+    fn middle_horizontal_top_vertical() {
+        let pos = Vector3::new(BLOCK_WIDTH / 2.0, BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0 - 1.0, 0.0);
         let in_blocks = in_blocks(&pos);
         assert_eq!(in_blocks, vec![BOARD_WIDTH, 0]);
+    }
+
+    #[test]
+    fn middle_horizontal_bottom_vertical() {
+        let pos = Vector3::new(BLOCK_WIDTH / 2.0, BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0 + 1.0, 0.0);
+        let in_blocks = in_blocks(&pos);
+        assert_eq!(in_blocks, vec![BOARD_WIDTH, BOARD_WIDTH * 2]);
+    }
+
+    #[test]
+    fn left_horizontal_bottom_vertical() {
+        let pos = Vector3::new(BLOCK_WIDTH + BLOCK_WIDTH / 2.0 - 1.0, BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0 + 1.0, 0.0);
+        let in_blocks = in_blocks(&pos);
+        assert_eq!(in_blocks, vec![BOARD_WIDTH + 1, BOARD_WIDTH, BOARD_WIDTH * 2 + 1, BOARD_WIDTH * 2]);
     }
 }
